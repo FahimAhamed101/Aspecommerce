@@ -19,9 +19,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
         policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("http://localhost:4200", "http://localhost:3000")
                   .AllowAnyMethod()
-                  .AllowAnyHeader();
+                  .AllowAnyHeader()
+                  .AllowCredentials()
+                  .WithExposedHeaders("Content-Type");
         });
 });
 
@@ -69,9 +71,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("AllowAll");
-app.UseHttpsRedirection();
 app.UseAuthentication(); 
 app.UseAuthorization();
 app.MapControllers();
