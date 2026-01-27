@@ -1,3 +1,4 @@
+using Ecommerce.Core.Entities;
 using Ecommerce.Core.Entities.Identity;
 using Ecommerce.Core.Interfaces;
 using Ecommerce.Infrastructure.Data;
@@ -58,6 +59,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Add Authentication and Authorization
 builder.Services.AddAuthentication();
@@ -88,7 +91,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
+        // context.Database.Migrate(); // Commented out since database is already set up
 
         // Seed roles
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
@@ -101,6 +104,34 @@ using (var scope = app.Services.CreateScope())
                 await roleManager.CreateAsync(new IdentityRole(roleName));
             }
         }
+
+        // Seed product brands
+        if (!context.ProductBrands.Any())
+        {
+            var brands = new[]
+            {
+                new ProductBrand { Name = "Apple" },
+                new ProductBrand { Name = "Samsung" },
+                new ProductBrand { Name = "Nike" },
+                new ProductBrand { Name = "Adidas" }
+            };
+            context.ProductBrands.AddRange(brands);
+        }
+
+        // Seed product types
+        if (!context.ProductTypes.Any())
+        {
+            var types = new[]
+            {
+                new ProductType { Name = "Electronics" },
+                new ProductType { Name = "Clothing" },
+                new ProductType { Name = "Books" },
+                new ProductType { Name = "Home & Garden" }
+            };
+            context.ProductTypes.AddRange(types);
+        }
+
+        await context.SaveChangesAsync();
     }
     catch (Exception ex)
     {

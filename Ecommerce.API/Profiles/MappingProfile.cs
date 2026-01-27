@@ -1,6 +1,7 @@
 using AutoMapper;
 using Ecommerce.API.Dtos.Requests;
 using Ecommerce.API.Dtos.Responses;
+using Ecommerce.Core.Entities;
 using Ecommerce.Core.Entities.Identity;
 
 namespace Ecommerce.API.Profiles
@@ -23,6 +24,17 @@ namespace Ecommerce.API.Profiles
 
             // ApplicationUser to UserCommonDto mapping
             CreateMap<ApplicationUser, UserCommonDto>();
+
+            // Product mappings
+            CreateMap<ProductCreationDto, Product>()
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.StockQuantity));
+
+            CreateMap<Product, ProductResponseDto>()
+                .ForMember(dest => dest.ProductBrandName, opt => opt.MapFrom(src => src.ProductBrand.Name))
+                .ForMember(dest => dest.ProductTypeName, opt => opt.MapFrom(src => src.ProductType.Name));
+
+            CreateMap<ProductUpdateDto, Product>()
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.StockQuantity));
         }
     }
 }

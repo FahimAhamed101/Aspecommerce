@@ -164,3 +164,4 @@ C:\Users\Administrator\Desktop\asp\Ecommerce.API\obj\Debug\net10.0\refint\Ecomme
 C:\Users\Administrator\Desktop\asp\Ecommerce.API\obj\Debug\net10.0\Ecommerce.API.pdb
 C:\Users\Administrator\Desktop\asp\Ecommerce.API\obj\Debug\net10.0\Ecommerce.API.genruntimeconfig.cache
 C:\Users\Administrator\Desktop\asp\Ecommerce.API\obj\Debug\net10.0\ref\Ecommerce.API.dll
+C:\Users\Administrator\Desktop\asp\Ecommerce.API\bin\Debug\net10.0\Ecommerce.API.staticwebassets.runtime.json
