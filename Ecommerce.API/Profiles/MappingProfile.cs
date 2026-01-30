@@ -1,8 +1,10 @@
 using AutoMapper;
 using Ecommerce.API.Dtos.Requests;
 using Ecommerce.API.Dtos.Responses;
+using Ecommerce.API.Dtos;
 using Ecommerce.Core.Entities;
 using Ecommerce.Core.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace Ecommerce.API.Profiles
 {
@@ -24,6 +26,25 @@ namespace Ecommerce.API.Profiles
 
             // ApplicationUser to UserCommonDto mapping
             CreateMap<ApplicationUser, UserCommonDto>();
+
+            // Profile mappings
+            CreateMap<ApplicationUser, ProfileResponseDto>();
+            CreateMap<ProfileUpdateDto, ApplicationUser>();
+
+            // Address mappings
+            CreateMap<Address, AddressDto>().ReverseMap();
+
+            // Roles and permissions mappings
+            CreateMap<IdentityRole, RoleDto>();
+            CreateMap<RoleToCreateDto, IdentityRole>();
+            CreateMap<ApplicationUser, UserRolesDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
+            CreateMap<IdentityRole, CheckBoxRoleManageDto>()
+                .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Name));
+            CreateMap<IdentityRole, RolePermissionsDto>()
+                .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Name));
 
             // Product mappings
             CreateMap<ProductCreationDto, Product>()

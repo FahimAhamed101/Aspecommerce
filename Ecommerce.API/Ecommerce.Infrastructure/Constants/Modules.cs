@@ -4,8 +4,10 @@ namespace Ecommerce.Infrastructure.Constants
     {
         Products,
         Users,
+        Profiles,
         Orders,
         Categories,
-        Reviews
+        Reviews,
+        Roles
     }
 }

@@ -10,6 +10,7 @@ namespace Ecommerce.Core.Entities.Identity
         public string LastName { get; set; } = string.Empty;
         public Gender Gender { get; set; }
         public string? ProfilePictureUrl { get; set; }
-       public ICollection<RefreshToken>? RefreshTokens { get; set; } = [];
+        public Address? Address { get; set; }
+        public ICollection<RefreshToken>? RefreshTokens { get; set; } = [];
     }
 }
