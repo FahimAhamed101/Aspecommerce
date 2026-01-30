@@ -30,6 +30,7 @@ export interface IResetPassword {
 export interface JwtPayload {
   email: string;
   nameid: string;
-  roles: string[];
+  roles: string[] | string;
+  role?: string;
   Permission: string[];
 }

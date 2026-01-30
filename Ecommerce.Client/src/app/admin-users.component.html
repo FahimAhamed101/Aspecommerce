@@ -1,0 +1,73 @@
+<section class="admin-users">
+  <h2>User Management</h2>
+
+  <div class="filters">
+    <input
+      type="text"
+      placeholder="Search name/email"
+      [(ngModel)]="search"
+    />
+    <input
+      type="text"
+      placeholder="Role"
+      [(ngModel)]="role"
+    />
+    <input
+      type="text"
+      placeholder="Sort"
+      [(ngModel)]="sort"
+    />
+    <button type="button" (click)="applyFilters()">Apply</button>
+  </div>
+
+  <div class="status" *ngIf="lastActionMessage">
+    {{ lastActionMessage }}
+  </div>
+
+  <div class="table-wrap" *ngIf="!isLoading; else loading">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Gender</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phoneNumber }}</td>
+          <td>{{ user.gender }}</td>
+          <td class="actions">
+            <button type="button" (click)="lockUser(user.id)">Lock</button>
+            <button type="button" class="secondary" (click)="unlockUser(user.id)">Unlock</button>
+          </td>
+        </tr>
+        <tr *ngIf="users.length === 0">
+          <td colspan="5">No users found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #loading>
+    <div class="loading">Loading users...</div>
+  </ng-template>
+
+  <div class="pagination">
+    <button type="button" (click)="previousPage()" [disabled]="pageIndex === 1">
+      Prev
+    </button>
+    <span>Page {{ pageIndex }}</span>
+    <button
+      type="button"
+      (click)="nextPage()"
+      [disabled]="pageIndex * pageSize >= totalItems"
+    >
+      Next
+    </button>
+  </div>
+</section>

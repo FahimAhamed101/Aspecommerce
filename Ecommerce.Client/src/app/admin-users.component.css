@@ -1,0 +1,86 @@
+.admin-users {
+  max-width: 1100px;
+  margin: 96px auto 40px;
+  padding: 0 16px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.filters input {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.filters button {
+  border: none;
+  border-radius: 8px;
+  background: #222;
+  color: #fff;
+  padding: 8px 12px;
+}
+
+.table-wrap {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: left;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actions button {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: #b42318;
+  color: #fff;
+}
+
+.actions .secondary {
+  background: #027a48;
+}
+
+.pagination {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.pagination button {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: #222;
+  color: #fff;
+}
+
+.loading {
+  padding: 16px;
+}
+
+.status {
+  margin-bottom: 12px;
+  color: #0f5132;
+}

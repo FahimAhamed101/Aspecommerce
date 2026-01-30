@@ -1,0 +1,88 @@
+<section class="admin-roles">
+  <h2>Role & Permission Management</h2>
+
+  <div class="status" *ngIf="actionMessage">
+    {{ actionMessage }}
+  </div>
+
+  <div class="card">
+    <h3>Roles</h3>
+    <div class="row">
+      <input type="text" placeholder="New role name" [(ngModel)]="newRoleName" />
+      <button type="button" (click)="createRole()">Create Role</button>
+    </div>
+
+    <div class="table-wrap" *ngIf="!isLoadingRoles; else loadingRoles">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Users</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let role of roles">
+            <td>{{ role.name }}</td>
+            <td>{{ role.userCount ?? 0 }}</td>
+            <td class="actions">
+              <button type="button" class="danger" (click)="deleteRole(role.id)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="roles.length === 0">
+            <td colspan="3">No roles found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #loadingRoles>
+      <div class="loading">Loading roles...</div>
+    </ng-template>
+  </div>
+
+  <div class="card">
+    <h3>Manage Permissions</h3>
+    <div class="row">
+      <select [(ngModel)]="selectedRoleId">
+        <option value="">Select role</option>
+        <option *ngFor="let role of roles" [value]="role.id">
+          {{ role.name }}
+        </option>
+      </select>
+      <button type="button" (click)="loadPermissions()">Load</button>
+    </div>
+
+    <div class="permissions" *ngIf="rolePermissions">
+      <div class="permission-item" *ngFor="let perm of rolePermissions.permissions; let i = index">
+        <label>
+          <input type="checkbox" [checked]="perm.isSelected" (change)="togglePermission(perm)" />
+          {{ perm.permissionName }}
+        </label>
+      </div>
+      <button type="button" (click)="savePermissions()" [disabled]="isSavingPermissions">
+        Save Permissions
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Manage User Roles</h3>
+    <div class="row">
+      <input type="text" placeholder="User ID" [(ngModel)]="manageUserId" />
+      <button type="button" (click)="loadUserRoles()">Load</button>
+    </div>
+
+    <div *ngIf="userRoles">
+      <div class="permission-item" *ngFor="let role of userRoles.roles; let i = index">
+        <label>
+          <input type="checkbox" [checked]="role.isSelected" (change)="toggleUserRole(i)" />
+          {{ role.roleName }}
+        </label>
+      </div>
+      <button type="button" (click)="saveUserRoles()" [disabled]="isSavingUserRoles">
+        Save User Roles
+      </button>
+    </div>
+  </div>
+</section>

@@ -1,7 +1,8 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { isPlatformBrowser } from '@angular/common';
 import { Environment } from './environment';
 import { IAccountUser, IEmailVerification, IForgetPassword, IResetPassword, JwtPayload } from './shared/modules/accountUser';
 import { ILogin } from './shared/modules/login';
@@ -13,18 +14,19 @@ import { tap, finalize, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AccountService {
+  private platformId = inject(PLATFORM_ID);
 
   private baseUrl = `${Environment.baseUrl}/api/account`;
 
   private userSignal = signal<IAccountUser | null>(null);
   user = computed(() => this.userSignal());
-  isLoggedIn = computed(() => !!this.userSignal());
+  isLoggedIn = computed(() => !!this.userSignal()?.token);
   constructor(
     private http: HttpClient,
     private router: Router,
    
   ) {
-   
+    this.loadCurrentUser();
   }
 
   // 🔐 LOGIN
@@ -54,13 +56,13 @@ export class AccountService {
 
   // 🚪 LOGOUT
   logout() {
+    this.clearUserData();
     this.http
       .post(
         `${this.baseUrl}/logout`,
         {},
         { withCredentials: true }
       )
-      .pipe(finalize(() => this.clearUserData()))
       .subscribe();
   }
 
@@ -178,51 +180,81 @@ export class AccountService {
   }
 
   // HELPERS
-  private setUser(user: IAccountUser) {
-    let permissions: string[] = [];
+  private normalizeUser(user: IAccountUser): IAccountUser {
+    let permissions: string[] = user.permissions ?? [];
+    let roles: string[] = user.roles ?? [];
 
     if (user.token) {
       try {
-        const payload = jwtDecode<JwtPayload>(user.token);
-        permissions = payload.Permission || [];
+        const payload = jwtDecode<JwtPayload & { role?: string; roles?: string | string[] }>(user.token);
+        permissions = permissions.length ? permissions : (payload.Permission || []);
+
+        if (!roles.length) {
+          const tokenRoles = payload.roles ?? payload.role;
+          if (Array.isArray(tokenRoles)) {
+            roles = tokenRoles;
+          } else if (typeof tokenRoles === 'string' && tokenRoles.length > 0) {
+            roles = [tokenRoles];
+          }
+        }
       } catch (err) {
         console.error('Failed to decode JWT', err);
       }
     }
 
-    this.userSignal.set({ ...user, permissions });
+    return { ...user, permissions, roles };
+  }
 
-    localStorage.setItem(
-      'user',
-      JSON.stringify({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        userName: user.userName,
-        email: user.email,
-        roles: user.roles,
-        permissions, // store permissions
-        profilePicture: user.profilePicture,
-        refreshTokenExpiration: user.refreshTokenExpiration,
-        token: user.token
-      })
-    );
+  private setUser(user: IAccountUser) {
+    const normalized = this.normalizeUser(user);
+    this.userSignal.set(normalized);
+
+    if (this.isBrowser()) {
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          firstName: normalized.firstName,
+          lastName: normalized.lastName,
+          userName: normalized.userName,
+          email: normalized.email,
+          roles: normalized.roles,
+          permissions: normalized.permissions, // store permissions
+          profilePicture: normalized.profilePicture,
+          refreshTokenExpiration: normalized.refreshTokenExpiration,
+          token: normalized.token
+        })
+      );
+    }
   }
 
   loadCurrentUser() {
+    if (!this.isBrowser()) return;
     const userStr = localStorage.getItem('user');
     if (!userStr) return;
 
     try {
-      const user = JSON.parse(userStr);
-      this.userSignal.set(user);
+      const user = JSON.parse(userStr) as IAccountUser;
+      const normalized = this.normalizeUser(user);
+      if (!normalized.token) {
+        this.clearUserData();
+        return;
+      }
+      this.userSignal.set(normalized);
+      localStorage.setItem('user', JSON.stringify(normalized));
     } catch {
       this.clearUserData();
     }
   }
 
   private clearUserData() {
-    localStorage.removeItem('user');
+    if (this.isBrowser()) {
+      localStorage.removeItem('user');
+    }
     this.userSignal.set(null);
     this.router.navigate(['/login']);
+  }
+
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
   }
 }

@@ -1,0 +1,82 @@
+<section class="admin-products">
+  <h2>Product Management</h2>
+
+  <div class="status" *ngIf="actionMessage">
+    {{ actionMessage }}
+  </div>
+
+  <div class="card">
+    <h3>Filters</h3>
+    <div class="filters">
+      <input type="text" placeholder="Search" [(ngModel)]="search" />
+      <input type="text" placeholder="Sort" [(ngModel)]="sort" />
+      <input type="number" placeholder="Brand Id" [(ngModel)]="brandId" />
+      <input type="number" placeholder="Type Id" [(ngModel)]="typeId" />
+      <button type="button" (click)="applyFilters()">Apply</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>{{ formMode === 'create' ? 'Create Product' : 'Edit Product' }}</h3>
+    <div class="grid">
+      <input type="text" placeholder="Name" [(ngModel)]="name" />
+      <input type="text" placeholder="Description" [(ngModel)]="description" />
+      <input type="number" placeholder="Price" [(ngModel)]="price" />
+      <input type="number" placeholder="Stock Quantity" [(ngModel)]="stockQuantity" />
+      <input type="number" placeholder="Product Type Id" [(ngModel)]="productTypeId" />
+      <input type="number" placeholder="Product Brand Id" [(ngModel)]="productBrandId" />
+      <input type="file" (change)="onImageSelected($event)" />
+    </div>
+    <div class="row">
+      <label>
+        <input type="checkbox" [(ngModel)]="removeImage" />
+        Remove image
+      </label>
+      <button type="button" (click)="saveProduct()">
+        {{ formMode === 'create' ? 'Create' : 'Update' }}
+      </button>
+      <button type="button" class="secondary" (click)="startCreate()">Reset</button>
+    </div>
+  </div>
+
+  <div class="table-wrap" *ngIf="!isLoading; else loading">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Brand</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.name }}</td>
+          <td>{{ product.price }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>{{ product.productBrandName }}</td>
+          <td>{{ product.productTypeName }}</td>
+          <td class="actions">
+            <button type="button" (click)="startEdit(product)">Edit</button>
+            <button type="button" class="danger" (click)="deleteProduct(product.id)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="products.length === 0">
+          <td colspan="6">No products found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #loading>
+    <div class="loading">Loading products...</div>
+  </ng-template>
+
+  <div class="pagination">
+    <button type="button" (click)="previousPage()" [disabled]="pageIndex === 1">Prev</button>
+    <span>Page {{ pageIndex }}</span>
+    <button type="button" (click)="nextPage()" [disabled]="pageIndex * pageSize >= totalItems">Next</button>
+  </div>
+</section>

@@ -1,7 +1,5 @@
-import { Component, HostListener, OnInit, inject, computed, effect } from '@angular/core';
+import { Component, HostListener, OnInit, inject, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
-import { Observable } from 'rxjs';
 
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { AccountService } from '../../app/account-service';
@@ -80,17 +78,10 @@ export class NavBar implements OnInit {
   };
 
   constructor() {
-    // Debug effect to track user state changes
-    effect(() => {
-      const user = this.currentUser();
-      console.log('Current User State:', user);
-      console.log('Roles:', user?.roles);
-      console.log('Is Logged In:', this.isLoggedIn());
-    });
   }
 
   ngOnInit(): void {
-  
+    this.accountService.loadCurrentUser();
   }
 
   @HostListener('window:scroll', [])

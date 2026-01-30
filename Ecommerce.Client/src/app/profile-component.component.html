@@ -1,0 +1,136 @@
+<section class="profile-page">
+  <h2>Profile</h2>
+
+  <div class="profile-section">
+    <h3>Basic Info</h3>
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <div class="grid">
+        <label>
+          First Name
+          <input type="text" formControlName="firstName" />
+        </label>
+        <label>
+          Last Name
+          <input type="text" formControlName="lastName" />
+        </label>
+        <label>
+          Phone
+          <input type="text" formControlName="phoneNumber" />
+        </label>
+        <label>
+          Gender
+          <select formControlName="gender">
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </label>
+      </div>
+      <button type="submit" [disabled]="isSavingProfile">Save Profile</button>
+    </form>
+  </div>
+
+  <div class="profile-section">
+    <h3>Profile Image</h3>
+    <div class="row">
+      <input type="file" (change)="onProfileImageSelected($event)" />
+      <button type="button" (click)="deleteProfileImage()" [disabled]="isUploadingImage">
+        Remove Image
+      </button>
+    </div>
+  </div>
+
+  <div class="profile-section">
+    <h3>Address</h3>
+    <form [formGroup]="addressForm" (ngSubmit)="saveAddress()">
+      <div class="grid">
+        <label>
+          First Name
+          <input type="text" formControlName="firstName" />
+        </label>
+        <label>
+          Last Name
+          <input type="text" formControlName="lastName" />
+        </label>
+        <label>
+          Street
+          <input type="text" formControlName="street" />
+        </label>
+        <label>
+          City
+          <input type="text" formControlName="city" />
+        </label>
+        <label>
+          State
+          <input type="text" formControlName="state" />
+        </label>
+        <label>
+          Postal Code
+          <input type="text" formControlName="postalCode" />
+        </label>
+        <label>
+          Country
+          <input type="text" formControlName="country" />
+        </label>
+        <label>
+          Phone
+          <input type="text" formControlName="phoneNumber" />
+        </label>
+      </div>
+      <button type="submit" [disabled]="isSavingAddress">Save Address</button>
+    </form>
+  </div>
+
+  <div class="profile-section">
+    <h3>Security</h3>
+
+    <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
+      <div class="grid">
+        <label>
+          Old Password
+          <input type="password" formControlName="oldPassword" />
+        </label>
+        <label>
+          New Password
+          <input type="password" formControlName="newPassword" />
+        </label>
+      </div>
+      <button type="submit" [disabled]="isChangingPassword">Change Password</button>
+    </form>
+
+    <form [formGroup]="setPasswordForm" (ngSubmit)="setPassword()">
+      <div class="grid">
+        <label>
+          Set Password
+          <input type="password" formControlName="password" />
+        </label>
+      </div>
+      <button type="submit" [disabled]="isSettingPassword">Set Password</button>
+    </form>
+  </div>
+
+  <div class="profile-section">
+    <h3>Two-Factor Authentication</h3>
+    <div class="row">
+      <span>Status: {{ twoFaEnabled ? 'Enabled' : 'Disabled' }}</span>
+      <button type="button" (click)="toggle2fa()" [disabled]="isSaving2fa">
+        {{ twoFaEnabled ? 'Disable' : 'Enable' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="profile-section danger">
+    <h3>Delete Account</h3>
+    <form [formGroup]="deleteProfileForm" (ngSubmit)="deleteProfile()">
+      <div class="grid">
+        <label>
+          Password
+          <input type="password" formControlName="password" />
+        </label>
+      </div>
+      <button type="submit" class="danger-btn" [disabled]="isDeletingProfile">
+        Delete Account
+      </button>
+    </form>
+  </div>
+</section>
