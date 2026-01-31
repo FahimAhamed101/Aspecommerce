@@ -5,6 +5,10 @@ using Ecommerce.Infrastructure.Data;
 using Ecommerce.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.FileProviders;
+using System.Text;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,9 +66,37 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 // Add Authentication and Authorization
-builder.Services.AddAuthentication();
+var jwtSection = builder.Configuration.GetSection("Jwt");
+var jwtKey = jwtSection.GetValue<string>("Key");
+var jwtIssuer = jwtSection.GetValue<string>("Issuer");
+var jwtAudience = jwtSection.GetValue<string>("Audience");
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!)),
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(1)
+        };
+    });
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
@@ -80,6 +112,16 @@ else
     app.UseHttpsRedirection();
 }
 
+app.UseStaticFiles();
+var nestedWebRoot = Path.Combine(app.Environment.ContentRootPath, "wwwroot", "wwwroot");
+if (Directory.Exists(nestedWebRoot))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(nestedWebRoot),
+        RequestPath = ""
+    });
+}
 app.UseCors("AllowAll");
 app.UseAuthentication(); 
 app.UseAuthorization();
@@ -92,7 +134,10 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        // context.Database.Migrate(); // Commented out since database is already set up
+        if (app.Environment.IsDevelopment())
+        {
+            context.Database.Migrate();
+        }
 
         // Seed roles
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();

@@ -44,7 +44,9 @@ namespace Ecommerce.API.Controllers
                 .GetAllWithSpecAsync(spec);
 
 
-            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductResponseDto>>(products);
+            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductResponseDto>>(products)
+                .Select(MapProductResponse)
+                .ToList();
 
             return Ok(new Pagination<ProductResponseDto>(specParams.PageIndex,
                 specParams.PageSize,
@@ -63,7 +65,7 @@ namespace Ecommerce.API.Controllers
             if (product is null)
                 return NotFound(new ApiResponse((int)HttpStatusCode.NotFound));
 
-            var productDto = _mapper.Map<Product, ProductResponseDto>(product);
+            var productDto = MapProductResponse(_mapper.Map<Product, ProductResponseDto>(product));
             return Ok(productDto);
         }
 
@@ -95,7 +97,7 @@ namespace Ecommerce.API.Controllers
             var createdProduct = await _unitOfWork.Repository<Product>()
                 .GetWithSpecAsync(spec);
 
-            return Ok(_mapper.Map<Product, ProductResponseDto>(createdProduct!));
+            return Ok(MapProductResponse(_mapper.Map<Product, ProductResponseDto>(createdProduct!)));
         }
 
         [HttpPut]
@@ -139,7 +141,7 @@ namespace Ecommerce.API.Controllers
             var updatedProduct = await _unitOfWork.Repository<Product>()
                 .GetWithSpecAsync(spec);
 
-            return Ok(_mapper.Map<Product, ProductResponseDto>(updatedProduct!));
+            return Ok(MapProductResponse(_mapper.Map<Product, ProductResponseDto>(updatedProduct!)));
         }
 
         [HttpDelete("{id:int}")]
@@ -159,6 +161,30 @@ namespace Ecommerce.API.Controllers
                 _fileService.DeleteFile(product.PictureUrl);
 
             return NoContent();
+        }
+
+        private ProductResponseDto MapProductResponse(ProductResponseDto dto)
+        {
+            dto.PictureUrl = ToAbsoluteUrl(dto.PictureUrl);
+            return dto;
+        }
+
+        private string ToAbsoluteUrl(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            if (Uri.TryCreate(path, UriKind.Absolute, out _))
+                return path;
+
+            var cleaned = path.Replace("\\", "/");
+            if (cleaned.StartsWith("wwwroot/", StringComparison.OrdinalIgnoreCase))
+                cleaned = cleaned["wwwroot/".Length..];
+
+            if (!cleaned.StartsWith("/"))
+                cleaned = "/" + cleaned;
+
+            return $"{Request.Scheme}://{Request.Host}{cleaned}";
         }
     }
 }

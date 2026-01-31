@@ -246,6 +246,7 @@ namespace Ecommerce.API.Controllers
         private async Task<UserDto> CreateUserResponseAsync(ApplicationUser user)
         {
             var response = _mapper.Map<UserDto>(user);
+            response.Roles = await _userManager.GetRolesAsync(user);
             response.Token = await _tokenService.CreateToken(user);
 
             user.RefreshTokens ??= new List<RefreshToken>();

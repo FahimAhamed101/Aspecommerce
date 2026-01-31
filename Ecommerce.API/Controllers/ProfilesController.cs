@@ -52,7 +52,7 @@ namespace Ecommerce.API.Controllers
 
             var users = await usersQuery.ToListAsync();
 
-            var data = _mapper.Map<IReadOnlyList<ProfileResponseDto>>(users);
+            var data = users.Select(MapProfileResponse).ToList();
 
             return Ok(new Pagination<ProfileResponseDto>(
                 specParams.PageIndex,
@@ -67,7 +67,7 @@ namespace Ecommerce.API.Controllers
         {
             var user = await _userManager.FindUserByClaimsPrincipalAsync(HttpContext.User);
 
-            return Ok(_mapper.Map<ProfileResponseDto>(user));
+            return Ok(MapProfileResponse(user));
         }
 
         [HttpPatch("profile/json")]
@@ -97,7 +97,7 @@ namespace Ecommerce.API.Controllers
                 return BadRequest(new ApiResponse(400,
                     string.Join(", ", result.Errors.Select(e => e.Description))));
 
-            return Ok(_mapper.Map<ProfileResponseDto>(user));
+            return Ok(MapProfileResponse(user));
         }
 
         [HttpPatch("profile/image")]
@@ -126,7 +126,7 @@ namespace Ecommerce.API.Controllers
             if (!string.IsNullOrEmpty(oldImage))
                 _fileService.DeleteFile(oldImage);
 
-            return Ok(_mapper.Map<ProfileResponseDto>(user));
+            return Ok(MapProfileResponse(user));
         }
 
         [HttpDelete("profile/image")]
@@ -151,7 +151,7 @@ namespace Ecommerce.API.Controllers
             if (!string.IsNullOrEmpty(oldImage))
                 _fileService.DeleteFile(oldImage);
 
-            return Ok(_mapper.Map<ProfileResponseDto>(user));
+            return Ok(MapProfileResponse(user));
         }
 
         [HttpGet("address")]
@@ -159,8 +159,23 @@ namespace Ecommerce.API.Controllers
         public async Task<ActionResult<AddressDto>> GetAddress()
         {
             var user = await _userManager.FindUserByClaimsPrincipalWithAddressAsync(HttpContext.User);
+            if (user is null)
+                return NotFound(new ApiResponse(404));
 
-            return Ok(_mapper.Map<Address, AddressDto>(user?.Address!));
+            var address = user.Address;
+            var dto = new AddressDto
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber ?? string.Empty,
+                Street = address?.Street ?? string.Empty,
+                City = address?.City ?? string.Empty,
+                State = address?.Government ?? string.Empty,
+                PostalCode = address?.Zipcode ?? string.Empty,
+                Country = address?.Country ?? string.Empty
+            };
+
+            return Ok(dto);
         }
         
         [HttpPost("lock/{id}")]
@@ -182,7 +197,7 @@ namespace Ecommerce.API.Controllers
             if (!result.Succeeded)
                 return BadRequest(new ApiResponse(StatusCodes.Status400BadRequest));
             
-            return Ok(_mapper.Map<ProfileResponseDto>(user));
+            return Ok(MapProfileResponse(user));
         }
 
         [HttpPost("unlock/{id}")]
@@ -197,15 +212,32 @@ namespace Ecommerce.API.Controllers
             if (!result.Succeeded)
                 return BadRequest(new ApiResponse(StatusCodes.Status400BadRequest));
             
-            return Ok(_mapper.Map<ProfileResponseDto>(user));
+            return Ok(MapProfileResponse(user));
         }
 
         [HttpPut("address")]
         public async Task<ActionResult<AddressDto>> UpdateAddress([FromBody] AddressDto dto)
         {
             var user = await _userManager.FindUserByClaimsPrincipalWithAddressAsync(HttpContext.User);
+            if (user is null)
+                return NotFound(new ApiResponse(404));
 
-            user!.Address = _mapper.Map<AddressDto, Address>(dto);
+            user.FirstName = dto.FirstName;
+            user.LastName = dto.LastName;
+            user.PhoneNumber = dto.PhoneNumber;
+
+            var address = user.Address ?? new Address
+            {
+                ApplicationUserId = user.Id
+            };
+
+            address.Street = dto.Street;
+            address.City = dto.City;
+            address.Government = dto.State;
+            address.Zipcode = dto.PostalCode;
+            address.Country = dto.Country;
+
+            user.Address = address;
 
             var result = await _userManager.UpdateAsync(user);
 
@@ -213,7 +245,7 @@ namespace Ecommerce.API.Controllers
                 return BadRequest(new ApiResponse(400,
                     string.Join(", ", result.Errors.Select(e => e.Description))));
 
-            return Ok(_mapper.Map<Address, AddressDto>(user?.Address!));
+            return Ok(dto);
         }
 
         [HttpPost("changePassword")]
@@ -303,6 +335,31 @@ namespace Ecommerce.API.Controllers
                 return Unauthorized(new ApiResponse(StatusCodes.Status401Unauthorized));
 
             return Ok(user.TwoFactorEnabled );
+        }
+
+        private ProfileResponseDto MapProfileResponse(ApplicationUser user)
+        {
+            var dto = _mapper.Map<ProfileResponseDto>(user);
+            dto.ProfilePictureUrl = ToAbsoluteUrl(dto.ProfilePictureUrl);
+            return dto;
+        }
+
+        private string? ToAbsoluteUrl(string? path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return null;
+
+            if (Uri.TryCreate(path, UriKind.Absolute, out _))
+                return path;
+
+            var cleaned = path.Replace("\\", "/");
+            if (cleaned.StartsWith("wwwroot/", StringComparison.OrdinalIgnoreCase))
+                cleaned = cleaned["wwwroot/".Length..];
+
+            if (!cleaned.StartsWith("/"))
+                cleaned = "/" + cleaned;
+
+            return $"{Request.Scheme}://{Request.Host}{cleaned}";
         }
     }
 }
