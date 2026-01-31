@@ -14,6 +14,8 @@ export interface IProductResponse {
   productTypeName: string;
 }
 
+export type IProduct = IProductResponse;
+
 export interface IProductQueryParams {
   pageIndex?: number;
   pageSize?: number;

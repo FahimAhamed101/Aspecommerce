@@ -1,0 +1,80 @@
+.toolbar {
+  position: relative;
+  z-index: 2;
+}
+
+.filter-panel {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+  max-width: 600px;
+  top: 60px;
+  right: 0;
+  z-index: 5;
+}
+
+.filter-header,
+.filter-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.filter-section {
+  margin-bottom: 16px;
+}
+
+.filter-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.filter-option {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-option.active {
+  border-color: #198754;
+  background: #e9f7ef;
+}
+
+.loading-wrapper {
+  text-align: center;
+  padding: 24px;
+}
+
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #ddd;
+  border-top-color: #111;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+  animation: spin 0.8s linear infinite;
+}
+
+.fade-item {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.4s ease;
+}
+
+.fade-item.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

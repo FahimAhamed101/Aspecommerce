@@ -53,11 +53,17 @@ export const routes: Routes = [
       .then(s => s.RegisterComponent)
   },
 
-    {
+  {
     path: 'login',
     
     loadComponent: () =>
       import('./login-component/login-component.component')
       .then(s => s.LoginComponent)
+  },
+  {
+    path: 'products/:id',
+    loadComponent: () =>
+      import('./product-details.component')
+      .then(s => s.ProductDetailsComponent)
   },
 ];

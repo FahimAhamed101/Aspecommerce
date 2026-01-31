@@ -1,0 +1,25 @@
+<section class="product-details">
+  <div class="container">
+    <a class="back-link" routerLink="/home">&lt;- Back to shop</a>
+
+    <div class="state" *ngIf="isLoading">Loading product...</div>
+    <div class="state error" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</div>
+
+    <div class="details-card" *ngIf="!isLoading && product">
+      <div class="image">
+        <img [src]="imageUrl" [alt]="product.name" />
+      </div>
+      <div class="info">
+        <h1>{{ product.name }}</h1>
+        <p class="price">${{ product.price }}</p>
+        <p class="meta">{{ product.productBrandName }} - {{ product.productTypeName }}</p>
+        <p class="desc">{{ product.description }}</p>
+        <div class="stats">
+          <span>Stock: {{ product.quantity }}</span>
+          <span>Sold: {{ product.boughtQuantity }}</span>
+          <span>Rating: {{ product.averageRating }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

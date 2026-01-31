@@ -217,6 +217,7 @@ export class ProfileComponent implements OnInit {
     const oldPassword = this.changePasswordForm.value.oldPassword ?? '';
     const newPassword = this.changePasswordForm.value.newPassword ?? '';
     if (!oldPassword || !newPassword) return;
+
     this.isChangingPassword = true;
     this.profilesService.changePassword({ oldPassword, newPassword }).subscribe({
       next: () => {
@@ -234,6 +235,7 @@ export class ProfileComponent implements OnInit {
     if (this.setPasswordForm.invalid) return;
     const password = this.setPasswordForm.value.password ?? '';
     if (!password) return;
+
     this.isSettingPassword = true;
     this.profilesService.setPassword({ password }).subscribe({
       next: () => {
@@ -251,6 +253,7 @@ export class ProfileComponent implements OnInit {
     if (this.deleteProfileForm.invalid) return;
     const password = this.deleteProfileForm.value.password ?? '';
     if (!password) return;
+
     this.isDeletingProfile = true;
     this.profilesService.deleteProfile({ password }).subscribe({
       next: () => {

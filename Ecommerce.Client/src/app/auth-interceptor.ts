@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  if (typeof localStorage === 'undefined') {
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
     return next(req);
   }
 
