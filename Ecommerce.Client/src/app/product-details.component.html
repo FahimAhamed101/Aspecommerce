@@ -13,6 +13,12 @@
         <h1>{{ product.name }}</h1>
         <p class="price">${{ product.price }}</p>
         <p class="meta">{{ product.productBrandName }} - {{ product.productTypeName }}</p>
+        <div class="actions">
+          <button class="btn btn-dark" (click)="addToCart()">Add to Cart</button>
+          <button class="btn btn-outline-dark" (click)="addToWishList()">
+            <i class="fas fa-heart me-1"></i> Wishlist
+          </button>
+        </div>
         <p class="desc">{{ product.description }}</p>
         <div class="stats">
           <span>Stock: {{ product.quantity }}</span>

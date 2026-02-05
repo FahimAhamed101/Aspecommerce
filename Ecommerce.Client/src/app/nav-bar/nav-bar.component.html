@@ -43,7 +43,7 @@
         <li class="nav-item position-relative me-3" *ngIf="!hasAdminRole()">
           <a class="nav-link wishlist-icon" routerLink="/wishlist">
             <i class="fas fa-heart"></i>
-            <span class="wishlist-badge" >1</span>
+            <span class="wishlist-badge" *ngIf="wishListCount() > 0">{{ wishListCount() }}</span>
           </a>
         </li>
 
@@ -51,7 +51,7 @@
         <li class="nav-item position-relative me-4" *ngIf="!hasAdminRole()">
           <a class="nav-link cart-icon" routerLink="/basket">
             <i class="fas fa-shopping-cart"></i>
-            <span class="cart-badge" >1</span>
+            <span class="cart-badge" *ngIf="basketCount() > 0">{{ basketCount() }}</span>
           </a>
         </li>
 

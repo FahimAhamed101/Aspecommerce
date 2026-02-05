@@ -4,6 +4,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductsService } from './products-service';
 import { IProductResponse } from './shared/modules/product';
 import { Environment } from './environment';
+import { BasketService } from './basket-service';
+import { WishListService } from './wishlist-service';
 
 @Component({
   selector: 'app-product-details',
@@ -15,6 +17,8 @@ import { Environment } from './environment';
 export class ProductDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private productsService = inject(ProductsService);
+  private basketService = inject(BasketService);
+  private wishListService = inject(WishListService);
 
   product: IProductResponse | null = null;
   imageUrl = '';
@@ -41,6 +45,16 @@ export class ProductDetailsComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  addToCart(): void {
+    if (!this.product) return;
+    this.basketService.addItem(this.product).subscribe();
+  }
+
+  addToWishList(): void {
+    if (!this.product) return;
+    this.wishListService.addItem(this.product).subscribe();
   }
 
   private toAbsoluteUrl(path: string): string {

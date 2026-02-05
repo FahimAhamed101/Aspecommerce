@@ -51,6 +51,12 @@
   margin-bottom: 12px;
 }
 
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
 .desc {
   color: #374151;
   margin-bottom: 16px;

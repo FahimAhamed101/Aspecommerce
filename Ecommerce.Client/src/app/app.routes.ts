@@ -66,4 +66,16 @@ export const routes: Routes = [
       import('./product-details.component')
       .then(s => s.ProductDetailsComponent)
   },
+  {
+    path: 'basket',
+    loadComponent: () =>
+      import('./basket.component')
+      .then(s => s.BasketComponent)
+  },
+  {
+    path: 'wishlist',
+    loadComponent: () =>
+      import('./wishlist.component')
+      .then(s => s.WishListComponent)
+  },
 ];

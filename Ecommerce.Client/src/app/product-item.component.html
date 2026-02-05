@@ -1,10 +1,18 @@
-<a class="product-card" [routerLink]="['/products', product.id]">
-  <div class="image-wrap">
-    <img [src]="imageUrl" [alt]="product.name" loading="lazy" (error)="onImageError($event)" />
+<div class="product-card">
+  <a class="card-link" [routerLink]="['/products', product.id]">
+    <div class="image-wrap">
+      <img [src]="imageUrl" [alt]="product.name" loading="lazy" (error)="onImageError($event)" />
+    </div>
+    <div class="content">
+      <h5>{{ product.name }}</h5>
+      <p class="price">${{ product.price }}</p>
+      <p class="meta">{{ product.productBrandName }} - {{ product.productTypeName }}</p>
+    </div>
+  </a>
+  <div class="actions">
+    <button class="btn btn-dark btn-sm" (click)="addToCart($event)">Add to Cart</button>
+    <button class="btn btn-outline-dark btn-sm" (click)="addToWishList($event)">
+      <i class="fas fa-heart"></i>
+    </button>
   </div>
-  <div class="content">
-    <h5>{{ product.name }}</h5>
-    <p class="price">${{ product.price }}</p>
-    <p class="meta">{{ product.productBrandName }} - {{ product.productTypeName }}</p>
-  </div>
-</a>
+</div>

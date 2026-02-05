@@ -1,0 +1,42 @@
+<section class="wishlist-page">
+  <div class="container">
+    <div class="wishlist-header">
+      <div>
+        <h1>Your Wishlist</h1>
+        <p class="muted">Save products to buy later.</p>
+      </div>
+      <button class="btn btn-outline-dark" *ngIf="hasItems()" (click)="clearWishList()">Clear Wishlist</button>
+    </div>
+
+    <ng-container *ngIf="hasItems(); else emptyState">
+      <div class="wishlist-grid">
+        <div class="wishlist-item" *ngFor="let item of wishList()!.items">
+          <div class="thumb">
+            <img [src]="toAbsoluteUrl(item.pictureUrl)" [alt]="item.productName" />
+          </div>
+          <div class="details">
+            <h5>{{ item.productName }}</h5>
+            <p>{{ item.brand }} • {{ item.type }}</p>
+            <span class="price">{{ item.price | currency }}</span>
+          </div>
+          <div class="quantity">
+            <button class="btn-qty" (click)="decrement(item)">-</button>
+            <span>{{ item.quantity }}</span>
+            <button class="btn-qty" (click)="increment(item)">+</button>
+          </div>
+          <div class="actions">
+            <button class="btn btn-dark" (click)="moveToCart(item)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <h3>Your wishlist is empty</h3>
+        <p>Browse products and tap the heart to save them.</p>
+        <a routerLink="/home" class="btn btn-dark">Discover Products</a>
+      </div>
+    </ng-template>
+  </div>
+</section>

@@ -1,0 +1,54 @@
+<section class="basket-page">
+  <div class="container">
+    <div class="basket-header">
+      <div>
+        <h1>Shopping Cart</h1>
+        <p class="muted">Review your items and adjust quantities.</p>
+      </div>
+      <button class="btn btn-outline-dark" *ngIf="hasItems()" (click)="clearBasket()">Clear Cart</button>
+    </div>
+
+    <ng-container *ngIf="hasItems(); else emptyState">
+      <div class="basket-grid">
+        <div class="basket-item" *ngFor="let item of basket()!.items">
+          <div class="thumb">
+            <img [src]="toAbsoluteUrl(item.pictureUrl)" [alt]="item.productName" />
+          </div>
+          <div class="details">
+            <h5>{{ item.productName }}</h5>
+            <p>{{ item.brand }} • {{ item.type }}</p>
+            <span class="price">{{ item.price | currency }}</span>
+          </div>
+          <div class="quantity">
+            <button class="btn-qty" (click)="decrement(item)">-</button>
+            <span>{{ item.quantity }}</span>
+            <button class="btn-qty" (click)="increment(item)">+</button>
+          </div>
+          <div class="line-total">
+            {{ (item.price * item.quantity) | currency }}
+          </div>
+        </div>
+      </div>
+
+      <div class="basket-summary">
+        <div class="summary-line">
+          <span>Items</span>
+          <span>{{ itemCount() }}</span>
+        </div>
+        <div class="summary-line total">
+          <span>Total</span>
+          <span>{{ total() | currency }}</span>
+        </div>
+        <a routerLink="/home" class="btn btn-dark">Continue Shopping</a>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <h3>Your cart is empty</h3>
+        <p>Add items to your cart to see them here.</p>
+        <a routerLink="/home" class="btn btn-dark">Go Shopping</a>
+      </div>
+    </ng-template>
+  </div>
+</section>

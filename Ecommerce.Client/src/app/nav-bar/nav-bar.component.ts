@@ -3,6 +3,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { AccountService } from '../../app/account-service';
+import { BasketService } from '../../app/basket-service';
+import { WishListService } from '../../app/wishlist-service';
 import { IAccountUser } from '../../app/shared/modules/accountUser';
 
 
@@ -23,11 +25,15 @@ interface RoleInfo {
 export class NavBar implements OnInit {
 
   private accountService = inject(AccountService);
+  private basketService = inject(BasketService);
+  private wishListService = inject(WishListService);
 
 
 
   isLoggedIn = computed(() => this.accountService.isLoggedIn());
   currentUser = computed(() => this.accountService.user());
+  basketCount = this.basketService.itemCount;
+  wishListCount = this.wishListService.itemCount;
   sections = ['home', 'shop', 'reviews', 'contact'];
   activeSection: string = '';
 
