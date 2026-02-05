@@ -19,7 +19,9 @@ namespace Ecommerce.Infrastructure.Data
         public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<ProductReview> ProductReviews { get; set; }
         public DbSet<Address> Addresses { get; set; }
-
+            
+        public DbSet<CustomerBasket> CustomerBaskets { get; set; }
+        public DbSet<CustomerWishList> CustomerWishLists { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

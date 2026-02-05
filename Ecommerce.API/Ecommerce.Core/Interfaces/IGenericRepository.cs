@@ -17,5 +17,9 @@ namespace Ecommerce.Core.Interfaces
         void Delete(T entity);
         Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> spec);
         Task<T?> GetWithSpecAsync(ISpecification<T> spec);
+        Task<IReadOnlyList<T>> GetAllAsync();
+        Task AddAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
     }
 }

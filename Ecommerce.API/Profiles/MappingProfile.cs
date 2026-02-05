@@ -56,6 +56,22 @@ namespace Ecommerce.API.Profiles
 
             CreateMap<ProductUpdateDto, Product>()
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.StockQuantity));
+
+            // Basket mappings
+            CreateMap<BasketItemDto, BasketItem>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Id));
+            CreateMap<BasketItem, BasketItemDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId));
+            CreateMap<CustomerBasketDto, CustomerBasket>().ReverseMap();
+
+            // Wishlist mappings
+            CreateMap<WishListItemDto, WishListItem>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Id));
+            CreateMap<WishListItem, WishListItemDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId));
+            CreateMap<CustomerWishListDto, CustomerWishList>().ReverseMap();
         }
     }
 }

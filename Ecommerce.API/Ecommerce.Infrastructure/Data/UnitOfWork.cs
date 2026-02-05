@@ -39,5 +39,10 @@ namespace Ecommerce.Infrastructure.Data
         {
             _context.Dispose();
         }
+
+        public async Task Complete()
+        {
+            await CompleteAsync();
+        }
     }
 }

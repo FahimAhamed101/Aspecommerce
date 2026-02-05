@@ -70,6 +70,29 @@ namespace Ecommerce.Infrastructure.Data
             return await ApplySpecification(spec).FirstOrDefaultAsync();
         }
 
+        public async Task<IReadOnlyList<T>> GetAllAsync()
+        {
+            return await _context.Set<T>().ToListAsync();
+        }
+
+        public Task AddAsync(T entity)
+        {
+            _context.Set<T>().Add(entity);
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateAsync(T entity)
+        {
+            _context.Set<T>().Update(entity);
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteAsync(T entity)
+        {
+            _context.Set<T>().Remove(entity);
+            return Task.CompletedTask;
+        }
+
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), spec);
