@@ -1,3 +1,4 @@
+using Ecommerce.Core.Entities.Emails;
 using Ecommerce.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 
@@ -33,6 +34,20 @@ namespace Ecommerce.Infrastructure.Services
                 Console.WriteLine($"Error sending email: {ex.Message}");
                 return false;
             }
+        }
+
+        public Task SendAsync(EmailMessage message)
+        {
+            if (message == null)
+                return Task.CompletedTask;
+
+            // TODO: Implement email sending logic
+            // Placeholder implementation for order emails
+            Console.WriteLine($"Email would be sent to: {message.To}");
+            Console.WriteLine($"Subject: {message.Subject}");
+            Console.WriteLine($"Body: {message.HtmlBody}");
+
+            return Task.CompletedTask;
         }
     }
 }

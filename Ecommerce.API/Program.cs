@@ -1,3 +1,4 @@
+using Ecommerce.API.BackgroundJobs;
 using Ecommerce.Core.Entities;
 using Ecommerce.Core.Entities.Identity;
 using Ecommerce.Core.Interfaces;
@@ -67,6 +68,9 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddSingleton<OrderBackgroundService>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<OrderBackgroundService>());
 
 // Add Authentication and Authorization
 var jwtSection = builder.Configuration.GetSection("Jwt");

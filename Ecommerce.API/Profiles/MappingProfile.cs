@@ -4,6 +4,7 @@ using Ecommerce.API.Dtos.Responses;
 using Ecommerce.API.Dtos;
 using Ecommerce.Core.Entities;
 using Ecommerce.Core.Entities.Identity;
+using Ecommerce.Core.Entities.orderAggregate;
 using Microsoft.AspNetCore.Identity;
 
 namespace Ecommerce.API.Profiles
@@ -72,6 +73,27 @@ namespace Ecommerce.API.Profiles
             CreateMap<WishListItem, WishListItemDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId));
             CreateMap<CustomerWishListDto, CustomerWishList>().ReverseMap();
+
+            // Order mappings
+            CreateMap<OrderAddress, OrderAddressDto>().ReverseMap();
+            CreateMap<OrderItem, OrderItemResponseDto>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductItemOrdered.ProductItemId))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductItemOrdered.ProductName))
+                .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(src => src.ProductItemOrdered.PictureUrl));
+
+            CreateMap<Order, OrderResponseDto>()
+                .ForMember(dest => dest.ShippingPrice, opt => opt.MapFrom(src => src.DeliveryMethod.Price))
+                .ForMember(dest => dest.DeliveryMethod, opt => opt.MapFrom(src => src.DeliveryMethod.ShortName))
+                .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems))
+                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.SubTotal + src.DeliveryMethod.Price))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.AddressToShip, opt => opt.MapFrom(src => src.AddressToShip));
+
+            CreateMap<Order, AllOrdersDto>()
+                .ForMember(dest => dest.ShippingPrice, opt => opt.MapFrom(src => src.DeliveryMethod.Price))
+                .ForMember(dest => dest.DeliveryMethod, opt => opt.MapFrom(src => src.DeliveryMethod.ShortName))
+                .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.SubTotal + src.DeliveryMethod.Price))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
         }
     }
 }
